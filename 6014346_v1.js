@@ -82,19 +82,13 @@ const canvas = document.getElementById('miCanvas');
             dibujarEjes();
 
             // Obtener valores de los inputs
-            const x1 = parseInt(document.getElementById('x1').value);
-            const y1 = parseInt(document.getElementById('y1').value);
-            const x2 = parseInt(document.getElementById('x2').value);
-            const y2 = parseInt(document.getElementById('y2').value);
-            const x3 = parseInt(document.getElementById('x3').value);
-            const y3 = parseInt(document.getElementById('y3').value);
-            
-            const size = parseInt(document.getElementById('grosor').value);
-            const metodo = document.getElementById('metodo').value;
+            const config = ObtenerConfiguracion();
+            const p1, p2, p3, grosor, metodo} = config;
+        
             const msg = document.getElementById('mensaje');
 
             // Ejecutar validación
-            const esValido = esTriangulo(x1, y1, x2, y2, x3, y3);
+            const esValido = esTriangulo(p1.x1, p1.y1, p2.x2, p2.y2, p3.x3, p3.y3);
 
             // Convertir coordenadas (Y invertida para canvas)
             const c1 = canvasToCartesiana({x:x1, y:y1}, height);
@@ -137,3 +131,14 @@ const canvas = document.getElementById('miCanvas');
 
         // Ejecutar cuadrícula al cargar
         dibujarEjes();
+        // Nueva funcion de utilidad
+        function ObtenerConfiguracion(){
+            return{
+            p1: { x: parseInt(document.getElementById("x1").value), y : parseInt(document.getElementById("y1").value)},
+            p2: { x: parseInt(document.getElementById("x2").value), y : parseInt(document.getElementById("y2").value)},
+            p3: { x: parseInt(document.getElementById("x3").value), y : parseInt(document.getElementById("y3").value)},
+            grosor: parseInt(document.getElementById("grosor").value),
+            metodo: document.getElementById("metodo").value
+            }
+        }
+    
