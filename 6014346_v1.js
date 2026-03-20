@@ -12,14 +12,16 @@ const canvas = document.getElementById('miCanvas');
         // --- FUNCIONES DE DIBUJO ---
 
         function drawPoint(ctx, x, y, size) {
-            // Dibuja el píxel/punto con el grosor indicado
-            ctx.fillRect(x - size/2, y - size/2, size, size);
+        // Math.round asegura que el píxel se pinte en una coordenada entera exacta
+        ctx.fillRect(Math.round(x - size/2), Math.round(y - size/2), size, size);
         }
 
-        function canvasToCartesiana(p, height) {
-            // Invierte el eje Y para que se comporte como un plano cartesiano visual
-            return [p.x, height - p.y];
-        }
+        const toCanvas = (p) => ({ 
+            x: p.x, 
+            y: canvas.height - p.y 
+        });
+            
+        
 
         function drawLine(x1, y1, x2, y2, size, method) {
             if (method === "DDA") {
@@ -91,35 +93,35 @@ const canvas = document.getElementById('miCanvas');
             const esValido = esTriangulo(p1.x1, p1.y1, p2.x2, p2.y2, p3.x3, p3.y3);
 
             // Convertir coordenadas (Y invertida para canvas)
-            const c1 = canvasToCartesiana({x:x1, y:y1}, height);
-            const c2 = canvasToCartesiana({x:x2, y:y2}, height);
-            const c3 = canvasToCartesiana({x:x3, y:y3}, height);
+            const c1 = toCanvas(p1);
+            const c2 = toCanvas(p2);
+            const c3 = toCanvas(p3);
 
-            if (esValido) {
+           if (esValido) {
                 msg.innerText = "Verdadero: Es un triángulo.";
                 msg.style.color = "green";
                 
-                // Trazar las 3 líneas con el grosor (size) y método elegido
-                drawLine(c1[0], c1[1], c2[0], c2[1], size, metodo);
-                drawLine(c2[0], c2[1], c3[0], c3[1], size, metodo);
-                drawLine(c3[0], c3[1], c1[0], c1[1], size, metodo);
+                // Dibujamos las líneas usando .x y .y
+                drawLine(c1.x, c1.y, c2.x, c2.y, grosor, metodo);
+                drawLine(c2.x, c2.y, c3.x, c3.y, grosor, metodo);
+                drawLine(c3.x, c3.y, c1.x, c1.y, grosor, metodo);
 
-                // Dibujar etiquetas de texto solicitadas
+                // Dibujamos etiquetas de texto
                 ctx.fillStyle = "blue";
                 ctx.font = "12px Arial";
-                ctx.fillText(`x1,y1 (${x1},${y1})`, c1[0] + 8, c1[1] - 8);
-                ctx.fillText(`x2,y2 (${x2},${y2})`, c2[0] + 8, c2[1] - 8);
-                ctx.fillText(`x3,y3 (${x3},${y3})`, c3[0] + 8, c3[1] - 8);
+                ctx.fillText(`P1 (${p1.x},${p1.y})`, c1.x + 8, c1.y - 8);
+                ctx.fillText(`P2 (${p2.x},${p2.y})`, c2.x + 8, c2.y - 8);
+                ctx.fillText(`P3 (${p3.x},${p3.y})`, c3.x + 8, c3.y - 8);
             } else {
-                msg.innerText = "Falso: No es un triángulo (puntos colineales).";
+                msg.innerText = "Falso: No es un triángulo.";
                 msg.style.color = "red";
-                // Pintar solo los puntos para ver el error
+                // Pintar puntos de error
                 ctx.fillStyle = "red";
-                drawPoint(ctx, c1[0], c1[1], 6);
-                drawPoint(ctx, c2[0], c2[1], 6);
-                drawPoint(ctx, c3[0], c3[1], 6);
+                drawPoint(ctx, c1.x, c1.y, 6);
+                drawPoint(ctx, c2.x, c2.y, 6);
+                drawPoint(ctx, c3.x, c3.y, 6);
             }
-        }
+        
 
         function limpiar() {
             // Limpia el canvas y el mensaje
